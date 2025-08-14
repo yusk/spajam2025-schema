@@ -1,0 +1,312 @@
+info:
+  description: ''
+  title: ''
+  version: ''
+openapi: 3.0.0
+paths:
+  /api/capsules/:
+    get:
+      operationId: capsules_list
+      parameters:
+      - in: query
+        name: limit
+        schema:
+          description: Number of results to return per page.
+          title: Limit
+          type: integer
+      - in: query
+        name: offset
+        schema:
+          description: The initial index from which to return the results.
+          title: Offset
+          type: integer
+      - in: query
+        name: id
+        schema:
+          description: ''
+          title: ''
+          type: string
+      - in: query
+        name: order_by
+        schema:
+          description: ''
+          title: ''
+          type: string
+      tags:
+      - capsules
+    post:
+      operationId: capsules_create
+      tags:
+      - capsules
+  /api/capsules/{id}/:
+    delete:
+      operationId: capsules_delete
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          description: A UUID string identifying this capsule.
+          title: id
+          type: string
+      - in: query
+        name: id
+        schema:
+          description: ''
+          title: ''
+          type: string
+      - in: query
+        name: order_by
+        schema:
+          description: ''
+          title: ''
+          type: string
+      tags:
+      - capsules
+    get:
+      operationId: capsules_read
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          description: A UUID string identifying this capsule.
+          title: id
+          type: string
+      - in: query
+        name: id
+        schema:
+          description: ''
+          title: ''
+          type: string
+      - in: query
+        name: order_by
+        schema:
+          description: ''
+          title: ''
+          type: string
+      tags:
+      - capsules
+    patch:
+      operationId: capsules_partial_update
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          description: A UUID string identifying this capsule.
+          title: id
+          type: string
+      - in: query
+        name: id
+        schema:
+          description: ''
+          title: ''
+          type: string
+      - in: query
+        name: order_by
+        schema:
+          description: ''
+          title: ''
+          type: string
+      tags:
+      - capsules
+    put:
+      operationId: capsules_update
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          description: A UUID string identifying this capsule.
+          title: id
+          type: string
+      - in: query
+        name: id
+        schema:
+          description: ''
+          title: ''
+          type: string
+      - in: query
+        name: order_by
+        schema:
+          description: ''
+          title: ''
+          type: string
+      tags:
+      - capsules
+  /api/capsules/{id}/join/:
+    post:
+      operationId: capsules_join
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          description: A UUID string identifying this capsule.
+          title: id
+          type: string
+      tags:
+      - capsules
+  /api/capsules/{id}/lock/:
+    post:
+      operationId: capsules_lock
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          description: A UUID string identifying this capsule.
+          title: id
+          type: string
+      tags:
+      - capsules
+  /api/status/:
+    get:
+      operationId: status_list
+      parameters:
+      - in: query
+        name: limit
+        schema:
+          description: Number of results to return per page.
+          title: Limit
+          type: integer
+      - in: query
+        name: offset
+        schema:
+          description: The initial index from which to return the results.
+          title: Offset
+          type: integer
+      tags:
+      - status
+  /api/user/:
+    delete:
+      operationId: user_delete
+      tags:
+      - user
+    get:
+      operationId: user_list
+      parameters:
+      - in: query
+        name: limit
+        schema:
+          description: Number of results to return per page.
+          title: Limit
+          type: integer
+      - in: query
+        name: offset
+        schema:
+          description: The initial index from which to return the results.
+          title: Offset
+          type: integer
+      tags:
+      - user
+    put:
+      operationId: user_update
+      tags:
+      - user
+  /api/users/:
+    get:
+      operationId: users_list
+      parameters:
+      - in: query
+        name: limit
+        schema:
+          description: Number of results to return per page.
+          title: Limit
+          type: integer
+      - in: query
+        name: offset
+        schema:
+          description: The initial index from which to return the results.
+          title: Offset
+          type: integer
+      - in: query
+        name: id
+        schema:
+          description: ''
+          title: ''
+          type: string
+      - in: query
+        name: name
+        schema:
+          description: ''
+          title: ''
+          type: string
+      - in: query
+        name: name__gt
+        schema:
+          description: ''
+          title: ''
+          type: string
+      - in: query
+        name: name__lt
+        schema:
+          description: ''
+          title: ''
+          type: string
+      - in: query
+        name: tweet
+        schema:
+          description: ''
+          title: ''
+          type: string
+      - in: query
+        name: order_by
+        schema:
+          description: ''
+          title: ''
+          type: string
+      tags:
+      - users
+  /api/users/{id}/:
+    get:
+      operationId: users_read
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          description: A UUID string identifying this user.
+          title: id
+          type: string
+      - in: query
+        name: id
+        schema:
+          description: ''
+          title: ''
+          type: string
+      - in: query
+        name: name
+        schema:
+          description: ''
+          title: ''
+          type: string
+      - in: query
+        name: name__gt
+        schema:
+          description: ''
+          title: ''
+          type: string
+      - in: query
+        name: name__lt
+        schema:
+          description: ''
+          title: ''
+          type: string
+      - in: query
+        name: tweet
+        schema:
+          description: ''
+          title: ''
+          type: string
+      - in: query
+        name: order_by
+        schema:
+          description: ''
+          title: ''
+          type: string
+      tags:
+      - users
+servers:
+- url: ''
