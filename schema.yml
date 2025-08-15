@@ -1,312 +1,930 @@
+swagger: '2.0'
 info:
+  title: API Schema
   description: ''
-  title: ''
-  version: ''
-openapi: 3.0.0
+  version: v1
+host: localhost:8000
+schemes:
+- http
+- https
+basePath: /api
+consumes:
+- application/json
+produces:
+- application/json
+securityDefinitions:
+  Basic:
+    type: basic
+security:
+- Basic: []
 paths:
-  /api/capsules/:
+  /auth/refresh/:
+    post:
+      operationId: auth_refresh_create
+      summary: |-
+        API View that returns a refreshed token (with new expiration) based on
+        existing token
+      description: |-
+        If 'orig_iat' field (original issued-at-time) is found, will first check
+        if it's within expiration window, then copy it to the new token
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/RefreshJSONWebToken'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/RefreshJSONWebToken'
+      tags:
+      - auth
+    parameters: []
+  /auth/user/:
+    post:
+      operationId: auth_user_create
+      summary: API View that receives a POST with a user's username and password.
+      description: Returns a JSON Web Token that can be used for authenticated requests.
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/JSONWebToken'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/JSONWebToken'
+      tags:
+      - auth
+    parameters: []
+  /auth/uuid/:
+    post:
+      operationId: auth_uuid_create
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/UnivUniqueID'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Token'
+      tags:
+      - auth
+    parameters: []
+  /auth/verify/:
+    post:
+      operationId: auth_verify_create
+      description: |-
+        API View that checks the veracity of a token, returning the token if it
+        is valid.
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/VerifyJSONWebToken'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/VerifyJSONWebToken'
+      tags:
+      - auth
+    parameters: []
+  /capsules/:
     get:
       operationId: capsules_list
+      description: ''
       parameters:
-      - in: query
-        name: limit
-        schema:
-          description: Number of results to return per page.
-          title: Limit
-          type: integer
-      - in: query
-        name: offset
-        schema:
-          description: The initial index from which to return the results.
-          title: Offset
-          type: integer
-      - in: query
-        name: id
-        schema:
+      - name: id
+        in: query
+        description: id
+        required: false
+        type: string
+      - name: order_by
+        in: query
+        description: 順序
+        required: false
+        type: string
+        enum:
+        - id
+        - -id
+        - created_at
+        - -created_at
+      - name: limit
+        in: query
+        description: Number of results to return per page.
+        required: false
+        type: integer
+      - name: offset
+        in: query
+        description: The initial index from which to return the results.
+        required: false
+        type: integer
+      responses:
+        '200':
           description: ''
-          title: ''
-          type: string
-      - in: query
-        name: order_by
-        schema:
-          description: ''
-          title: ''
-          type: string
+          schema:
+            required:
+            - count
+            - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/NestedCreateReadOnlyCapsuleSerializer'
       tags:
       - capsules
     post:
       operationId: capsules_create
-      tags:
-      - capsules
-  /api/capsules/{id}/:
-    delete:
-      operationId: capsules_delete
+      description: ''
       parameters:
-      - in: path
-        name: id
+      - name: data
+        in: body
         required: true
         schema:
-          description: A UUID string identifying this capsule.
-          title: id
-          type: string
-      - in: query
-        name: id
-        schema:
+          $ref: '#/definitions/NestedCreateWriteOnlyCapsuleSerializer'
+      responses:
+        '201':
           description: ''
-          title: ''
-          type: string
-      - in: query
-        name: order_by
-        schema:
-          description: ''
-          title: ''
-          type: string
+          schema:
+            $ref: '#/definitions/NestedCreateReadOnlyCapsuleSerializer'
       tags:
       - capsules
+    parameters: []
+  /capsules/{capsule_pk}/images/:
     get:
-      operationId: capsules_read
+      operationId: capsules_images_list
+      description: ''
       parameters:
-      - in: path
-        name: id
+      - name: id
+        in: query
+        description: id
+        required: false
+        type: string
+      - name: limit
+        in: query
+        description: Number of results to return per page.
+        required: false
+        type: integer
+      - name: offset
+        in: query
+        description: The initial index from which to return the results.
+        required: false
+        type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+            - count
+            - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/Image'
+      tags:
+      - capsules
+    post:
+      operationId: capsules_images_create
+      description: ''
+      parameters:
+      - name: data
+        in: body
         required: true
         schema:
-          description: A UUID string identifying this capsule.
-          title: id
-          type: string
-      - in: query
-        name: id
-        schema:
+          $ref: '#/definitions/Image'
+      responses:
+        '201':
           description: ''
-          title: ''
-          type: string
-      - in: query
-        name: order_by
+          schema:
+            $ref: '#/definitions/Image'
+      tags:
+      - capsules
+    parameters:
+    - name: capsule_pk
+      in: path
+      required: true
+      type: string
+  /capsules/{capsule_pk}/images/bulk/:
+    post:
+      operationId: capsules_images_bulk
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
         schema:
+          type: array
+          items:
+            $ref: '#/definitions/Image'
+      responses:
+        '201':
           description: ''
-          title: ''
-          type: string
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ReadImage'
+      tags:
+      - capsules
+    parameters:
+    - name: capsule_pk
+      in: path
+      required: true
+      type: string
+  /capsules/{capsule_pk}/images/{id}/:
+    get:
+      operationId: capsules_images_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Image'
+      tags:
+      - capsules
+    put:
+      operationId: capsules_images_update
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Image'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Image'
       tags:
       - capsules
     patch:
-      operationId: capsules_partial_update
+      operationId: capsules_images_partial_update
+      description: ''
       parameters:
-      - in: path
-        name: id
+      - name: data
+        in: body
         required: true
         schema:
-          description: A UUID string identifying this capsule.
-          title: id
-          type: string
-      - in: query
-        name: id
-        schema:
+          $ref: '#/definitions/Image'
+      responses:
+        '200':
           description: ''
-          title: ''
-          type: string
-      - in: query
-        name: order_by
-        schema:
+          schema:
+            $ref: '#/definitions/Image'
+      tags:
+      - capsules
+    delete:
+      operationId: capsules_images_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
           description: ''
-          title: ''
-          type: string
+      tags:
+      - capsules
+    parameters:
+    - name: capsule_pk
+      in: path
+      required: true
+      type: string
+    - name: id
+      in: path
+      required: true
+      type: string
+  /capsules/{id}/:
+    get:
+      operationId: capsules_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/NestedCreateReadOnlyCapsuleSerializer'
       tags:
       - capsules
     put:
       operationId: capsules_update
+      description: ''
       parameters:
-      - in: path
-        name: id
+      - name: data
+        in: body
         required: true
         schema:
-          description: A UUID string identifying this capsule.
-          title: id
-          type: string
-      - in: query
-        name: id
-        schema:
+          $ref: '#/definitions/NestedCreateWriteOnlyCapsuleSerializer'
+      responses:
+        '200':
           description: ''
-          title: ''
-          type: string
-      - in: query
-        name: order_by
-        schema:
-          description: ''
-          title: ''
-          type: string
+          schema:
+            $ref: '#/definitions/NestedCreateReadOnlyCapsuleSerializer'
       tags:
       - capsules
-  /api/capsules/{id}/join/:
+    patch:
+      operationId: capsules_partial_update
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/NestedCreateWriteOnlyCapsuleSerializer'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/NestedCreateReadOnlyCapsuleSerializer'
+      tags:
+      - capsules
+    delete:
+      operationId: capsules_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+      - capsules
+    parameters:
+    - name: id
+      in: path
+      description: A UUID string identifying this capsule.
+      required: true
+      type: string
+      format: uuid
+  /capsules/{id}/join/:
     post:
       operationId: capsules_join
+      description: ''
       parameters:
-      - in: path
-        name: id
+      - name: data
+        in: body
         required: true
         schema:
-          description: A UUID string identifying this capsule.
-          title: id
-          type: string
+          $ref: '#/definitions/None'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/None'
       tags:
       - capsules
-  /api/capsules/{id}/lock/:
+    parameters:
+    - name: id
+      in: path
+      description: A UUID string identifying this capsule.
+      required: true
+      type: string
+      format: uuid
+  /capsules/{id}/lock/:
     post:
       operationId: capsules_lock
+      description: ''
       parameters:
-      - in: path
-        name: id
+      - name: data
+        in: body
         required: true
         schema:
-          description: A UUID string identifying this capsule.
-          title: id
-          type: string
+          $ref: '#/definitions/None'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/None'
       tags:
       - capsules
-  /api/status/:
+    parameters:
+    - name: id
+      in: path
+      description: A UUID string identifying this capsule.
+      required: true
+      type: string
+      format: uuid
+  /register/dummy/:
+    post:
+      operationId: register_dummy_create
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/None'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Token'
+      tags:
+      - register
+    parameters: []
+  /register/user/:
+    post:
+      operationId: register_user_create
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/UserSignUp'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Token'
+      tags:
+      - register
+    parameters: []
+  /register/uuid/:
+    post:
+      operationId: register_uuid_create
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/UnivUniqueID'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Token'
+      tags:
+      - register
+    parameters: []
+  /status/:
     get:
       operationId: status_list
+      description: ''
       parameters:
-      - in: query
-        name: limit
-        schema:
-          description: Number of results to return per page.
-          title: Limit
-          type: integer
-      - in: query
-        name: offset
-        schema:
-          description: The initial index from which to return the results.
-          title: Offset
-          type: integer
+      - name: limit
+        in: query
+        description: Number of results to return per page.
+        required: false
+        type: integer
+      - name: offset
+        in: query
+        description: The initial index from which to return the results.
+        required: false
+        type: integer
+      responses:
+        '200':
+          description: ''
       tags:
       - status
-  /api/user/:
-    delete:
-      operationId: user_delete
-      tags:
-      - user
+    parameters: []
+  /user/:
     get:
       operationId: user_list
+      description: ''
       parameters:
-      - in: query
-        name: limit
-        schema:
-          description: Number of results to return per page.
-          title: Limit
-          type: integer
-      - in: query
-        name: offset
-        schema:
-          description: The initial index from which to return the results.
-          title: Offset
-          type: integer
+      - name: limit
+        in: query
+        description: Number of results to return per page.
+        required: false
+        type: integer
+      - name: offset
+        in: query
+        description: The initial index from which to return the results.
+        required: false
+        type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
       tags:
       - user
     put:
       operationId: user_update
-      tags:
-      - user
-  /api/users/:
-    get:
-      operationId: users_list
+      description: ''
       parameters:
-      - in: query
-        name: limit
-        schema:
-          description: Number of results to return per page.
-          title: Limit
-          type: integer
-      - in: query
-        name: offset
-        schema:
-          description: The initial index from which to return the results.
-          title: Offset
-          type: integer
-      - in: query
-        name: id
-        schema:
-          description: ''
-          title: ''
-          type: string
-      - in: query
-        name: name
-        schema:
-          description: ''
-          title: ''
-          type: string
-      - in: query
-        name: name__gt
-        schema:
-          description: ''
-          title: ''
-          type: string
-      - in: query
-        name: name__lt
-        schema:
-          description: ''
-          title: ''
-          type: string
-      - in: query
-        name: tweet
-        schema:
-          description: ''
-          title: ''
-          type: string
-      - in: query
-        name: order_by
-        schema:
-          description: ''
-          title: ''
-          type: string
-      tags:
-      - users
-  /api/users/{id}/:
-    get:
-      operationId: users_read
-      parameters:
-      - in: path
-        name: id
+      - name: data
+        in: body
         required: true
         schema:
-          description: A UUID string identifying this user.
-          title: id
-          type: string
-      - in: query
-        name: id
-        schema:
+          $ref: '#/definitions/User'
+      responses:
+        '200':
           description: ''
-          title: ''
-          type: string
-      - in: query
-        name: name
+          schema:
+            $ref: '#/definitions/User'
+      tags:
+      - user
+    delete:
+      operationId: user_delete
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
         schema:
+          $ref: '#/definitions/UserDelete'
+      responses:
+        '204':
           description: ''
-          title: ''
-          type: string
-      - in: query
-        name: name__gt
+          schema:
+            $ref: '#/definitions/None'
+      tags:
+      - user
+    parameters: []
+  /user/password/:
+    put:
+      operationId: user_password_update
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
         schema:
+          $ref: '#/definitions/UserPassword'
+      responses:
+        '200':
           description: ''
-          title: ''
-          type: string
-      - in: query
-        name: name__lt
-        schema:
+          schema:
+            $ref: '#/definitions/Token'
+      tags:
+      - user
+    parameters: []
+  /users/:
+    get:
+      operationId: users_list
+      description: ''
+      parameters:
+      - name: id
+        in: query
+        description: id
+        required: false
+        type: string
+      - name: name
+        in: query
+        description: name
+        required: false
+        type: string
+      - name: name__gt
+        in: query
+        description: name__gt
+        required: false
+        type: string
+      - name: name__lt
+        in: query
+        description: name__lt
+        required: false
+        type: string
+      - name: tweet
+        in: query
+        description: tweet
+        required: false
+        type: string
+      - name: order_by
+        in: query
+        description: 順序
+        required: false
+        type: string
+        enum:
+        - id
+        - -id
+      - name: limit
+        in: query
+        description: Number of results to return per page.
+        required: false
+        type: integer
+      - name: offset
+        in: query
+        description: The initial index from which to return the results.
+        required: false
+        type: integer
+      responses:
+        '200':
           description: ''
-          title: ''
-          type: string
-      - in: query
-        name: tweet
-        schema:
-          description: ''
-          title: ''
-          type: string
-      - in: query
-        name: order_by
-        schema:
-          description: ''
-          title: ''
-          type: string
+          schema:
+            required:
+            - count
+            - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/User'
       tags:
       - users
-servers:
-- url: ''
+    parameters: []
+  /users/{id}/:
+    get:
+      operationId: users_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      tags:
+      - users
+    parameters:
+    - name: id
+      in: path
+      description: A UUID string identifying this user.
+      required: true
+      type: string
+      format: uuid
+definitions:
+  RefreshJSONWebToken:
+    required:
+    - token
+    type: object
+    properties:
+      token:
+        title: Token
+        type: string
+        minLength: 1
+  JSONWebToken:
+    required:
+    - email
+    - password
+    type: object
+    properties:
+      email:
+        title: Email
+        type: string
+        minLength: 1
+      password:
+        title: Password
+        type: string
+        minLength: 1
+  UnivUniqueID:
+    required:
+    - uuid
+    type: object
+    properties:
+      uuid:
+        title: Uuid
+        type: string
+        format: uuid
+  Token:
+    required:
+    - token
+    type: object
+    properties:
+      token:
+        title: Token
+        type: string
+        minLength: 1
+  VerifyJSONWebToken:
+    required:
+    - token
+    type: object
+    properties:
+      token:
+        title: Token
+        type: string
+        minLength: 1
+  ReadUser:
+    type: object
+    properties:
+      id:
+        title: Id
+        type: string
+        format: uuid
+        readOnly: true
+  ReadImage:
+    type: object
+    properties:
+      id:
+        title: Id
+        type: string
+        format: uuid
+        readOnly: true
+      created_at:
+        title: Created at
+        type: string
+        format: date-time
+        readOnly: true
+      image:
+        title: Image
+        type: string
+        readOnly: true
+        format: uri
+  NestedCreateReadOnlyCapsuleSerializer:
+    required:
+    - title
+    - description
+    type: object
+    properties:
+      id:
+        title: Id
+        type: string
+        format: uuid
+        readOnly: true
+      title:
+        title: Title
+        type: string
+        minLength: 1
+      description:
+        title: Description
+        type: string
+        minLength: 1
+      creating:
+        title: Creating
+        type: boolean
+        readOnly: true
+      locked:
+        title: Locked
+        type: boolean
+        readOnly: true
+      created_at:
+        title: Created at
+        type: string
+        format: date-time
+        readOnly: true
+      members:
+        type: array
+        items:
+          $ref: '#/definitions/ReadUser'
+        readOnly: true
+      images:
+        type: array
+        items:
+          $ref: '#/definitions/ReadImage'
+        readOnly: true
+  NestedCreateWriteOnlyCapsuleSerializer:
+    required:
+    - title
+    - description
+    type: object
+    properties:
+      id:
+        title: Id
+        type: string
+        format: uuid
+        readOnly: true
+      title:
+        title: Title
+        type: string
+        minLength: 1
+      description:
+        title: Description
+        type: string
+        minLength: 1
+      creating:
+        title: Creating
+        type: boolean
+        readOnly: true
+      locked:
+        title: Locked
+        type: boolean
+        readOnly: true
+      members:
+        type: array
+        items:
+          $ref: '#/definitions/ReadUser'
+        readOnly: true
+      images:
+        type: array
+        items:
+          $ref: '#/definitions/ReadImage'
+        readOnly: true
+  Image:
+    required:
+    - image_base64
+    type: object
+    properties:
+      id:
+        title: Id
+        type: string
+        format: uuid
+        readOnly: true
+      created_at:
+        title: Created at
+        type: string
+        format: date-time
+        readOnly: true
+      image:
+        title: Image
+        type: string
+        readOnly: true
+        format: uri
+      image_base64:
+        title: Image base64
+        type: string
+        minLength: 1
+  None:
+    type: object
+    properties: {}
+  UserSignUp:
+    required:
+    - email
+    - password
+    - password_confirm
+    type: object
+    properties:
+      email:
+        title: Email
+        type: string
+        format: email
+        minLength: 1
+      password:
+        title: Password
+        type: string
+        minLength: 8
+      password_confirm:
+        title: Password confirm
+        type: string
+        minLength: 8
+  User:
+    required:
+    - icon_base64
+    type: object
+    properties:
+      id:
+        title: Id
+        type: string
+        format: uuid
+        readOnly: true
+      name:
+        title: Name
+        type: string
+        maxLength: 64
+      icon:
+        title: Icon
+        type: string
+        readOnly: true
+        x-nullable: true
+        format: uri
+      icon_base64:
+        title: Icon base64
+        type: string
+        minLength: 1
+  UserDelete:
+    required:
+    - password
+    type: object
+    properties:
+      password:
+        title: Password
+        type: string
+        minLength: 8
+  UserPassword:
+    required:
+    - password
+    - new_password
+    - new_password_confirm
+    type: object
+    properties:
+      password:
+        title: Password
+        type: string
+        minLength: 8
+      new_password:
+        title: New password
+        type: string
+        minLength: 8
+      new_password_confirm:
+        title: New password confirm
+        type: string
+        minLength: 8
