@@ -301,6 +301,23 @@ paths:
       tags:
       - api
     parameters: []
+  /api/user/github/:
+    get:
+      operationId: api_user_github_list
+      description: ログインユーザーのGitHub情報と言語統計を取得します。
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/UserGitHubResponse'
+        '400':
+          description: ''
+          schema:
+            $ref: '#/definitions/GitHubCallbackError'
+      tags:
+      - api
+    parameters: []
   /api/user/github/languages/:
     get:
       operationId: api_user_github_languages_list
@@ -806,47 +823,6 @@ definitions:
       percentage:
         title: Percentage
         type: number
-  GitHubLanguagesResponse:
-    required:
-    - total_repos
-    - languages
-    type: object
-    properties:
-      total_repos:
-        title: Total repos
-        type: integer
-      languages:
-        type: array
-        items:
-          $ref: '#/definitions/GitHubLanguage'
-  GitHubCallbackError:
-    required:
-    - error
-    type: object
-    properties:
-      error:
-        title: Error
-        type: string
-        minLength: 1
-  UserPassword:
-    required:
-    - password
-    - new_password
-    - new_password_confirm
-    type: object
-    properties:
-      password:
-        title: Password
-        type: string
-        minLength: 8
-      new_password:
-        title: New password
-        type: string
-        minLength: 8
-      new_password_confirm:
-        title: New password confirm
-        type: string
-        minLength: 8
   UserGitHubResponse:
     required:
     - user_id
@@ -883,6 +859,47 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/GitHubLanguage'
+  GitHubCallbackError:
+    required:
+    - error
+    type: object
+    properties:
+      error:
+        title: Error
+        type: string
+        minLength: 1
+  GitHubLanguagesResponse:
+    required:
+    - total_repos
+    - languages
+    type: object
+    properties:
+      total_repos:
+        title: Total repos
+        type: integer
+      languages:
+        type: array
+        items:
+          $ref: '#/definitions/GitHubLanguage'
+  UserPassword:
+    required:
+    - password
+    - new_password
+    - new_password_confirm
+    type: object
+    properties:
+      password:
+        title: Password
+        type: string
+        minLength: 8
+      new_password:
+        title: New password
+        type: string
+        minLength: 8
+      new_password_confirm:
+        title: New password confirm
+        type: string
+        minLength: 8
   GitHubCallbackUser:
     required:
     - id
