@@ -115,6 +115,19 @@ paths:
       tags:
       - api
     parameters: []
+  /api/matching/debug/reset/:
+    delete:
+      operationId: api_matching_debug_reset_delete
+      description: '[デバッグ用] 全ユーザーのマッチング履歴を削除します。'
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/MatchEndResponse'
+      tags:
+      - api
+    parameters: []
   /api/matching/debug/similarity/:
     get:
       operationId: api_matching_debug_similarity_list
@@ -138,10 +151,6 @@ paths:
           description: ''
           schema:
             $ref: '#/definitions/MatchEndResponse'
-        '404':
-          description: ''
-          schema:
-            $ref: '#/definitions/MatchError'
       tags:
       - api
     parameters: []
@@ -620,6 +629,15 @@ definitions:
         title: Error
         type: string
         minLength: 1
+  MatchEndResponse:
+    required:
+    - message
+    type: object
+    properties:
+      message:
+        title: Message
+        type: string
+        minLength: 1
   DebugCurrentUser:
     required:
     - id
@@ -689,15 +707,6 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/DebugSimilarityUser'
-  MatchEndResponse:
-    required:
-    - message
-    type: object
-    properties:
-      message:
-        title: Message
-        type: string
-        minLength: 1
   MatchHistory:
     required:
     - similarity_score
