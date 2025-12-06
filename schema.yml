@@ -607,6 +607,10 @@ definitions:
         items:
           $ref: '#/definitions/MatchedLanguage'
         readOnly: true
+      is_host:
+        title: Is host
+        type: boolean
+        readOnly: true
   MatchError:
     required:
     - error
